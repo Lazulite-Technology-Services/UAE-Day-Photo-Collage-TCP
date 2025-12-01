@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Android;
 using UnityEngine.UI;
 
 public class ScreenShotHandler : MonoBehaviour
@@ -20,16 +21,13 @@ public class ScreenShotHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Init();
+        //Init();
+        StartCoroutine(GetCameraPermission());
     }
 
 
     private void Init()
     {
-        if (!Application.HasUserAuthorization(UserAuthorization.WebCam))
-        {
-            Application.RequestUserAuthorization(UserAuthorization.WebCam);
-        }
 
         myMainCamera = Camera.main;
 
@@ -59,13 +57,32 @@ public class ScreenShotHandler : MonoBehaviour
         rawCamImage.material.mainTexture = webCamTexture;
 
         webCamTexture.Play();
-        webCamTexture.Pause();
+        //webCamTexture.Pause();
 
         if (resultImage != null && resultImage.gameObject.activeSelf)
         {
             resultImage.gameObject.SetActive(false);
         }        
     }
+
+    IEnumerator GetCameraPermission()
+    {
+        string[] permissions = { Permission.Camera };
+
+#if UNITY_ANDROID
+        if (!UnityEngine.Android.Permission.HasUserAuthorizedPermission(UnityEngine.Android.Permission.Camera))
+        {
+            UnityEngine.Android.Permission.RequestUserPermissions(permissions);
+
+            while (!UnityEngine.Android.Permission.HasUserAuthorizedPermission(UnityEngine.Android.Permission.Camera))
+            {
+                yield return null;
+            }
+        }
+#endif
+        Init();
+    }
+
 
     /*public void CropInsideMask()
     {

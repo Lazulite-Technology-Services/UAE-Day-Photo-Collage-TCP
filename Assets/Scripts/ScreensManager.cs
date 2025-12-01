@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,6 +20,8 @@ public class ScreensManager : MonoBehaviour
 
     [SerializeField] private int currentIndex;
 
+    [SerializeField] private TextMeshProUGUI countDown;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,7 +34,7 @@ public class ScreensManager : MonoBehaviour
         captureButton.onClick.AddListener(OnCapture);
         retakeButton.onClick.AddListener(RetakeImage);
         register.onClick.AddListener(() => EnableNextScreen(1));
-        submit.onClick.AddListener(() => EnableNextScreen(2));
+        //submit.onClick.AddListener(() => EnableNextScreen(2));
         homeButton.onClick.AddListener(OnHome);
 
         homeButton.gameObject.SetActive(false);
@@ -42,6 +45,7 @@ public class ScreensManager : MonoBehaviour
     private void SendImageToWall()
     {
         screenShotHandler.SaveScreenShot();
+        EnableNextScreen(3);
     }
 
     private void RetakeImage()
@@ -50,14 +54,16 @@ public class ScreensManager : MonoBehaviour
         retakeButton.gameObject.SetActive(false);
         proceedButton.gameObject.SetActive(false);
 
+        OnCapture();
         screenShotHandler.Retake();
     }
 
     private void OnCapture()
     {
         captureButton.gameObject.SetActive(false);
-        retakeButton.gameObject.SetActive(true);
-        proceedButton.gameObject.SetActive(true);
+
+        StartCoroutine(CountdownTimer(3));       
+
     }
 
     private void ResetUI()
@@ -99,7 +105,7 @@ public class ScreensManager : MonoBehaviour
             case 2: //Screen capture page
                 screens[2].SetActive(true);
 
-                screenShotHandler.Retake();
+                //screenShotHandler.Retake();
 
                 captureButton.gameObject.SetActive(true);
                 retakeButton.gameObject.SetActive(false);
@@ -113,17 +119,30 @@ public class ScreensManager : MonoBehaviour
         }
     }
 
-    private void ShowLoading()
+    private IEnumerator CountdownTimer(int duration)
     {
+        int remainingTime = duration;
+        countDown.gameObject.SetActive(true);
 
+        while (remainingTime > 0)
+        {
+            countDown.text = remainingTime.ToString();
+            Debug.Log("Time remaining: " + remainingTime + " seconds");
+            yield return new WaitForSeconds(1f); // Wait 1 second
+            remainingTime--;
+        }
+
+        countDown.gameObject.SetActive(false);
+        screenShotHandler.TakeSnapshot();
+
+        Debug.Log("Timer finished!");
+
+        //countDown.gameObject.SetActive(false);
+        retakeButton.gameObject.SetActive(true);
+        proceedButton.gameObject.SetActive(true);
     }
 
-    private void StartCountDown()
-    {
-
-    }
-
-    private void OnHome()
+    public void OnHome()
     {
         currentIndex = 0;
         EnableNextScreen(0);

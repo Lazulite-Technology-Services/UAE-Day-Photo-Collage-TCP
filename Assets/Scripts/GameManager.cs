@@ -4,11 +4,14 @@ using System.IO;
 using System.Net.Sockets;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Android;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     //[SerializeField] private ScreenShotHandler screenShotHandler;
+
+    [SerializeField] private HTTPManager httpManager;
 
     [SerializeField] private Button cmdButton, saveButton, closeButton;
 
@@ -28,11 +31,29 @@ public class GameManager : MonoBehaviour
 
     private void Init()
     {
+        TestConnection();
+
         //captureButton.onClick.AddListener(screenShotHandler.CropInsideMask);
         cmdButton.onClick.AddListener(()=> commandPanel.SetActive(true));
         saveButton.onClick.AddListener(SaveIp);
         closeButton.onClick.AddListener(CloseCommandPanel);
     }  
+
+    private void TestConnection()
+    {
+        TcpClient client = new TcpClient();
+        try
+        {
+            Debug.Log("Client port : " + PlayerPrefs.GetString("ip"));
+            client.Connect(PlayerPrefs.GetString("ip"), port);
+            Debug.Log("Connected to PC");
+            client.Close();
+        }
+        catch
+        {
+            Debug.LogError("Failed to connect. Check IP, port, and firewall.");
+        }
+    }
     
     private void SaveIp()
     {
@@ -44,9 +65,10 @@ public class GameManager : MonoBehaviour
         commandPanel.SetActive(false);  
     }
 
-    public void SendPNG()
+    /*public void SendPNG()
     {
         TcpClient client = new TcpClient();
+        Debug.Log("Client port : " + PlayerPrefs.GetString("ip"));
         client.Connect(PlayerPrefs.GetString("ip"), port);
 
         NetworkStream stream = client.GetStream();
@@ -56,8 +78,14 @@ public class GameManager : MonoBehaviour
         writer.Write(finalImageBytes.Length);
         // Send PNG bytes
         writer.Write(finalImageBytes);
+        writer.Flush();
 
         writer.Close();
         client.Close();
+    }*/
+
+    public void SendPNG()
+    {
+        StartCoroutine(httpManager.SendPNG(finalImageBytes));
     }
 }
