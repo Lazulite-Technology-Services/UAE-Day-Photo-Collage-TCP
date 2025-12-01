@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
         TestConnection();
 
         //captureButton.onClick.AddListener(screenShotHandler.CropInsideMask);
-        cmdButton.onClick.AddListener(()=> commandPanel.SetActive(true));
+        cmdButton.onClick.AddListener(OpenCommandPanel);
         saveButton.onClick.AddListener(SaveIp);
         closeButton.onClick.AddListener(CloseCommandPanel);
     }  
@@ -63,6 +63,12 @@ public class GameManager : MonoBehaviour
     private void CloseCommandPanel()
     {
         commandPanel.SetActive(false);  
+    }
+
+    private void OpenCommandPanel()
+    {
+        commandPanel.SetActive(true);
+        ipField.text = PlayerPrefs.GetString("ip");
     }
 
     public void SendPNG()

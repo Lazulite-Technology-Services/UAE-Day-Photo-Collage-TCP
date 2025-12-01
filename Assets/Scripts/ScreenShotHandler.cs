@@ -252,6 +252,7 @@ public class ScreenShotHandler : MonoBehaviour
 
         Debug.Log("Saved snapshot to: " + path);
 
+        resultImage.texture = null;
         gameManager.SendPNG();
 
     }

@@ -105,7 +105,7 @@ public class ScreensManager : MonoBehaviour
             case 2: //Screen capture page
                 screens[2].SetActive(true);
 
-                //screenShotHandler.Retake();
+                screenShotHandler.Retake();
 
                 captureButton.gameObject.SetActive(true);
                 retakeButton.gameObject.SetActive(false);
