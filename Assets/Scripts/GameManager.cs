@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
         commandPanel.SetActive(false);  
     }
 
-    /*public void SendPNG()
+    public void SendPNG()
     {
         TcpClient client = new TcpClient();
         Debug.Log("Client port : " + PlayerPrefs.GetString("ip"));
@@ -82,10 +82,10 @@ public class GameManager : MonoBehaviour
 
         writer.Close();
         client.Close();
-    }*/
-
-    public void SendPNG()
-    {
-        StartCoroutine(httpManager.SendPNG(finalImageBytes));
     }
+
+    //public void SendPNG()
+    //{
+    //    StartCoroutine(httpManager.SendPNG(finalImageBytes));
+    //}
 }
